@@ -112,6 +112,8 @@ typedef struct
     int fftlist;
     int fftcaptureplaybackdevices;
     const char *fftdevice;
+
+    const char *windowtitle;
 #endif
 } StartArgs;
 

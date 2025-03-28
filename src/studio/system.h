@@ -153,6 +153,7 @@ typedef struct
     int fftcaptureplaybackdevices;
     const char *fftdevice;
 
+    const char *windowtitle;
     tic_layout keyboardLayout;
 } StudioConfig;
 

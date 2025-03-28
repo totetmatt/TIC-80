@@ -1506,7 +1506,8 @@ static void updateMDate(Studio* studio)
 
 static void updateTitle(Studio* studio)
 {
-    char name[TICNAME_MAX] = TIC_TITLE;
+    char name[TICNAME_MAX];
+    strcpy(name,studio->config->data.windowtitle);
 
 #if defined(BUILD_EDITORS)
     if(strlen(studio->console->rom.name))
@@ -2637,6 +2638,8 @@ static StartArgs parseArgs(s32 argc, char **argv)
         OPT_BOOLEAN('\0', "fftlist", &args.fftlist, "list FFT devices"),
         OPT_BOOLEAN('\0', "fftcaptureplaybackdevices", &args.fftcaptureplaybackdevices, "Capture playback devices for loopback (Windows only)"),
         OPT_STRING('\0', "fftdevice", &args.fftdevice, "name of the device to use with FFT"),
+        OPT_GROUP("Misc:\n"),
+        OPT_STRING('\0', "windowtitle", &args.windowtitle, "Override window title (mostly useful for capture with software like OBS)"),
 #endif
         OPT_END(),
     };
@@ -2728,6 +2731,7 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
 #endif
 
     Studio* studio = NEW(Studio);
+
     *studio = (Studio)
     {
         .mode = TIC_START_MODE,
@@ -2886,6 +2890,11 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
     studio->config->data.fftdevice = args.fftdevice;
     studio->config->data.keyboardLayout = keyboardLayout;
 #endif
+    // Overrides window title. Useful for OBS capture
+    studio->config->data.windowtitle  = args.windowtitle;
+    if(studio->config->data.windowtitle == NULL ){
+        studio->config->data.windowtitle  = TIC_TITLE;
+    } 
 
     studioConfigChanged(studio);
 

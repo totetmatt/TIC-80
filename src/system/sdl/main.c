@@ -1946,7 +1946,7 @@ static s32 start(s32 argc, char **argv, const char* folder)
                     flags |= SDL_WINDOW_OPENGL;
 #endif
 
-                platform.window = SDL_CreateWindow(TIC_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, flags);
+                platform.window = SDL_CreateWindow(studio_config(platform.studio)->windowtitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, flags);
 
                 setWindowIcon();
                 initGPU();
