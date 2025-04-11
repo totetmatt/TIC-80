@@ -22,7 +22,7 @@
 
 #include "studio/system.h"
 #include "tools.h"
-
+#include "network.h"
 #include "ext/fft.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -1929,7 +1929,7 @@ static s32 start(s32 argc, char **argv, const char* folder)
         else
         {
             initSound();
-
+            initWebsocket();
             {
                 const s32 Width = TIC80_FULLWIDTH * studio_config(platform.studio)->uiScale;
                 const s32 Height = TIC80_FULLHEIGHT * studio_config(platform.studio)->uiScale;
