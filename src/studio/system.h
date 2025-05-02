@@ -154,6 +154,8 @@ typedef struct
     const char *fftdevice;
 
     const char *windowtitle;
+    int activatenetwork;
+    const char* networkmode;
     tic_layout keyboardLayout;
 } StudioConfig;
 

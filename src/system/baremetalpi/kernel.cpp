@@ -384,7 +384,7 @@ TShutdownMode Run(void)
         keyspinlock.Acquire();
         inputToTic();
         keyspinlock.Release();
-
+        networkTick();
         studio_tick(platform.studio, platform.input);
         studio_sound(platform.studio);
 

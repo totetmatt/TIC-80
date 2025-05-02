@@ -114,6 +114,9 @@ typedef struct
     const char *fftdevice;
 
     const char *windowtitle;
+    int activatenetwork;
+    const char *networkmode;
+
 #endif
 } StartArgs;
 

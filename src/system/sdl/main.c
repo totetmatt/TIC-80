@@ -22,7 +22,6 @@
 
 #include "studio/system.h"
 #include "tools.h"
-#include "network.h"
 #include "ext/fft.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -60,6 +59,8 @@
 #if defined(__TIC_ANDROID__)
 #include <sys/stat.h>
 #endif
+
+#include "network.h"
 
 #if defined(TOUCH_INPUT_SUPPORT)
 #define TOUCH_TIMEOUT (10 * TIC80_FRAMERATE)
@@ -1929,7 +1930,8 @@ static s32 start(s32 argc, char **argv, const char* folder)
         else
         {
             initSound();
-            initWebsocket();
+            set_network_config(studio_config(platform.studio)->activatenetwork,studio_config(platform.studio)->networkmode);
+            init_websocket();
             {
                 const s32 Width = TIC80_FULLWIDTH * studio_config(platform.studio)->uiScale;
                 const s32 Height = TIC80_FULLHEIGHT * studio_config(platform.studio)->uiScale;
@@ -1967,7 +1969,7 @@ static s32 start(s32 argc, char **argv, const char* folder)
                 while (!studio_alive(platform.studio))
                 {
                     gpuTick();
-
+                    
                     s64 delay = (nextTick += Delta) - SDL_GetPerformanceCounter();
 
                     if(delay > 0)

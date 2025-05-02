@@ -65,6 +65,8 @@
 #include <dlfcn.h>
 #endif
 
+#include "network.h"
+#include <jsmn.h>
 #define MD5_HASHSIZE 16
 
 #if defined(TIC80_PRO)
@@ -2259,7 +2261,55 @@ static void processMouseStates(Studio* studio)
     tic->ram->input.mouse.scrollx *= -1;
 }
 
+
 #if defined(BUILD_EDITORS)
+static void do_code_network_export(Studio* studio){
+#ifndef BAREMETALPI
+    char pos[sizeof studio->bytebattle.last.postag];
+    s32 x = 0, y = 0;
+    {
+        
+
+        if(studio->mode != TIC_RUN_MODE)
+        {
+            codeGetPos(studio->code, &x, &y);
+            x++; y++;
+        }
+
+        sprintf(pos, "-- pos: %i,%i\n", x, y);
+    }
+
+    if(strcmp(studio->bytebattle.last.postag, pos) || strcmp(studio->bytebattle.last.code.data, studio->code->src))
+    {
+            strcpy(studio->bytebattle.last.postag, pos);
+            strcpy(studio->bytebattle.last.code.data, studio->code->src);
+            network_send(studio->bytebattle.last.code.data,x,y);
+    }
+#endif  
+}
+static void do_code_network_import(Studio* studio){
+    
+    #ifndef BAREMETALPI
+    
+    int x=0,y=0;
+    network_get(studio->code->src,&x,&y);
+    if(x > -1 && y > -1) {
+        if(x == 0 && y == 0)
+        {
+            if(studio->mode != TIC_RUN_MODE)
+                runGame(studio);
+        }
+        else
+        {
+            codeSetPos(studio->code, x - 1, y - 1);
+
+            if(studio->mode == TIC_RUN_MODE)
+                setStudioMode(studio, TIC_CODE_MODE);
+        }
+    }
+    
+#endif
+}
 static void doCodeExport(Studio* studio)
 {
 #ifndef BAREMETALPI
@@ -2402,6 +2452,10 @@ void studio_tick(Studio* studio, tic80_input input)
     tic->ram->input = input;
 
 #if defined(BUILD_EDITORS)
+    
+   // printf("%s",studio->code->src);
+
+
     processAnim(studio->anim.movie, studio);
     checkChanges(studio);
     tic_net_start(studio->net);
@@ -2485,6 +2539,11 @@ void studio_tick(Studio* studio, tic80_input input)
         else if(bb->imp)
             doCodeImport(studio);
 
+
+        if(is_network_sender_mode())
+            do_code_network_export(studio);
+        if(is_network_grabber_mode())
+            do_code_network_import(studio);
         bb->ticks = 0;
     }
 #endif
@@ -2640,6 +2699,9 @@ static StartArgs parseArgs(s32 argc, char **argv)
         OPT_STRING('\0', "fftdevice", &args.fftdevice, "name of the device to use with FFT"),
         OPT_GROUP("Misc:\n"),
         OPT_STRING('\0', "windowtitle", &args.windowtitle, "Override window title (mostly useful for capture with software like OBS)"),
+        OPT_BOOLEAN('\0', "activatenetwork",&args.activatenetwork,"Activate network"),
+        OPT_STRING('\0', "networkmode",&args.networkmode,"networkmode SENDER or GRABBER"),
+
 #endif
         OPT_END(),
     };
@@ -2895,7 +2957,16 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
     if(studio->config->data.windowtitle == NULL ){
         studio->config->data.windowtitle  = TIC_TITLE;
     } 
+    
+    studio->config->data.activatenetwork = args.activatenetwork;
+    if(studio->config->data.activatenetwork==NULL) {
+        studio->config->data.activatenetwork = false;
+    }
 
+    studio->config->data.networkmode = args.networkmode;
+    if(studio->config->data.networkmode==NULL) {
+        studio->config->data.networkmode = "SENDER";
+    }
     studioConfigChanged(studio);
 
     if(args.cli)
