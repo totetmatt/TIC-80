@@ -7,7 +7,7 @@ struct mg_mgr mgr;
 struct mg_connection *c;
 char ws_url[1024]="ws://drone.alkama.com:9000/test/tic";
 bool tic80_network_done = false;    
-pthread_t pthread_poll =NULL;
+pthread_t pthread_poll =(void *)NULL;
 
 bool tic80_network_activated = false;
 enum NETWORK_MODE tic80_network_mode = SENDER;
