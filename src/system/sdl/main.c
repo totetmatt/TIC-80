@@ -1930,7 +1930,7 @@ static s32 start(s32 argc, char **argv, const char* folder)
         else
         {
             initSound();
-            set_network_config(studio_config(platform.studio)->activatenetwork,studio_config(platform.studio)->networkmode);
+            set_network_config(studio_config(platform.studio)->networkurl,studio_config(platform.studio)->activatenetwork,studio_config(platform.studio)->networkmode);
             init_websocket();
             {
                 const s32 Width = TIC80_FULLWIDTH * studio_config(platform.studio)->uiScale;

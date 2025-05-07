@@ -156,6 +156,7 @@ typedef struct
     const char *windowtitle;
     int activatenetwork;
     const char* networkmode;
+    const char* networkurl;
     tic_layout keyboardLayout;
 } StudioConfig;
 

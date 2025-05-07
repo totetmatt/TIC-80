@@ -5,7 +5,7 @@
 
 struct mg_mgr mgr; 
 struct mg_connection *c;
-char *ws_url="ws://drone.alkama.com:9000/test/tic";
+char ws_url[1024]="ws://drone.alkama.com:9000/test/tic";
 bool tic80_network_done = false;    
 pthread_t pthread_poll =NULL;
 
@@ -74,8 +74,9 @@ void init_websocket() {
 void free_websocket(){
     mg_mgr_free(&mgr);  
 }
-void set_network_config(int activate, char* mode) {
+void set_network_config(char* networkurl, int activate, char* mode) {
     // Network activated
+    strcpy(ws_url,networkurl);
     tic80_network_activated = activate;
     if(tic80_network_activated) {
       printf("Network is activated\n");

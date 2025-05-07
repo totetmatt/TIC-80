@@ -2701,6 +2701,7 @@ static StartArgs parseArgs(s32 argc, char **argv)
         OPT_STRING('\0', "windowtitle", &args.windowtitle, "Override window title (mostly useful for capture with software like OBS)"),
         OPT_BOOLEAN('\0', "activatenetwork",&args.activatenetwork,"Activate network"),
         OPT_STRING('\0', "networkmode",&args.networkmode,"networkmode SENDER or GRABBER"),
+        OPT_STRING('\0', "networkurl",&args.networkurl,"Url for websocket. Should be this pattern : ws://host:port/room/username"),
 
 #endif
         OPT_END(),
@@ -2967,6 +2968,12 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
     if(studio->config->data.networkmode==NULL) {
         studio->config->data.networkmode = "SENDER";
     }
+
+    studio->config->data.networkurl = args.networkurl;
+    if(studio->config->data.networkurl==NULL) {
+        studio->config->data.networkurl = "ws://drone.alkama.com:9000/test/tic80";
+    }
+    
     studioConfigChanged(studio);
 
     if(args.cli)
